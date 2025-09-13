@@ -7,8 +7,9 @@ import { ClerkProvider } from "@clerk/nextjs";
 const outfit = Outfit({ subsets: ["latin"], weight: ["400", "500", "600"] });
 
 export const metadata = {
-  title: "GoCart. - Shop smarter",
-  description: "GoCart. - Shop smarter",
+
+    title: "GoCart. - Loja de Produtos Online",
+    description: "GoCart. - A melhor loja de produtos online para você.",
 };
 
 export default function RootLayout({ children }) {
