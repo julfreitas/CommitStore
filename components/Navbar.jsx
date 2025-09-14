@@ -61,7 +61,7 @@ const Navbar = () => {
               className="relative flex items-center gap-2 text-slate-600"
             >
               <ShoppingCart size={18} />
-              Cart
+              Carrinho
               <button className="absolute -top-1 left-3 text-[8px] text-white bg-slate-600 size-3.5 rounded-full">
                 {cartCount}
               </button>
@@ -109,7 +109,7 @@ const Navbar = () => {
                 onClick={openSignIn}
                 className="px-7 py-1.5 bg-indigo-500 hover:bg-indigo-600 text-sm transition text-white rounded-full"
               >
-                Login
+                Entrar
               </button>
             )}
           </div>
