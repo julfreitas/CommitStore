@@ -72,7 +72,7 @@ const Navbar = () => {
                 onClick={openSignIn}
                 className="px-8 py-2 bg-indigo-500 hover:bg-indigo-600 transition text-white rounded-full"
               >
-                Login
+                Entrar
               </button>
             ) : (
               <UserButton>
@@ -100,7 +100,7 @@ const Navbar = () => {
                   <UserButton.Action
                     labelIcon={<PackageIcon size={16} />}
                     label="Meus pedidos"
-                    onClick={() => router.push("/pedidos")}
+                    onClick={() => router.push("/orders")}
                   />
                 </UserButton.MenuItems>
               </UserButton>
