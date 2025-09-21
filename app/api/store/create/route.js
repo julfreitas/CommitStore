@@ -7,7 +7,14 @@ import { NextResponse } from "next/server";
 export async function POST(request) {
   try {
     const { userId } = getAuth(request);
-    //obter os dados do formulário
+
+    console.log("userId", userId);
+    if (!userId) {
+      return NextResponse.json(
+        { error: "Usuário não autenticado" },
+        { status: 401 }
+      );
+    } //obter os dados do formulário
     const formData = await request.formData();
 
     const name = formData.get("name");
@@ -27,7 +34,10 @@ export async function POST(request) {
       !address ||
       !image
     ) {
-      return NextResponse("Campos obrigatórios faltando", { status: 400 });
+      return NextResponse.json(
+        { error: "Campos obrigatórios faltando" },
+        { status: 400 }
+      );
     }
 
     //verificar se o user já registrou uma loja
@@ -50,9 +60,12 @@ export async function POST(request) {
     });
 
     if (isUsernameTaken) {
-      return NextResponse("Este nome de usuário já está em uso", {
-        status: 400,
-      });
+      return NextResponse.json(
+        { error: "Este nome de usuário já está em uso" },
+        {
+          status: 400,
+        }
+      );
     }
     const buffer = Buffer.from(await image.arrayBuffer());
     const response = await imagekit.upload({
@@ -92,7 +105,9 @@ export async function POST(request) {
       data: { store: { connect: { id: newstore.id } } },
     });
 
-    return NextResponse.json({ mensage: "a loja foi criada e está aguardando aprovação" });
+    return NextResponse.json({
+      mensage: "a loja foi criada e está aguardando aprovação",
+    });
   } catch (error) {
     console.error(error);
     return NextResponse.json(
