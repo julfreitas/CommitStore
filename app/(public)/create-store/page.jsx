@@ -1,6 +1,6 @@
 "use client";
 import { assets } from "@/assets/assets";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import Image from "next/image";
 import toast from "react-hot-toast";
 import Loading from "@/components/Loading";
@@ -32,7 +32,40 @@ export default function CreateStore() {
   };
 
   const fetchSellerStatus = async () => {
-    // Logic to check if the store is already submitted
+    const token = await getToken();
+    try {
+      const { data } = await axios.get("/api/store/create", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (["approved", "rejected", "pending"].includes(data.status)) {
+        setStatus(data.status);
+        setAlreadySubmitted(true);
+        switch (data.status) {
+          case "approved":
+            setMessage(
+              "Sua loja foi aprovada! Agora você pode adicionar produtos à sua loja pelo painel do vendedor."
+            );
+            setTimeout(() => router.push("/store"), 5000);
+            break;
+          case "rejected":
+            setMessage(
+              "Sua solicitação de loja foi rejeitada, entre em contato com o administrador para mais detalhes."
+            );
+            break;
+          case "pending":
+            setMessage(
+              "Sua solicitação de loja está pendente, aguarde o administrador aprovar sua loja."
+            );
+            break;
+          default:
+            break;
+        }
+      } else {
+        setAlreadySubmitted(false);
+      }
+    } catch (error) {
+      toast.error(error?.response?.data?.error || error.message);
+    }
     setLoading(false);
   };
 
@@ -56,14 +89,17 @@ export default function CreateStore() {
         headers: { Authorization: `Bearer ${token}` },
       });
       toast.success(data.message);
+      await fetchSellerStatus();
     } catch (error) {
       toast.error(error?.response?.data?.error || error.message);
     }
   };
 
   useEffect(() => {
-    fetchSellerStatus();
-  }, []);
+    if (user) {
+      fetchSellerStatus();
+    }
+  }, [user]);
 
   if (!user) {
     return (
