@@ -195,7 +195,7 @@ const Footer = () => {
               <span className="text-green-600 text-5xl leading-0">.</span>
             </Link>
             <p className="max-w-[410px] mt-6 text-sm">
-              vindo à CommitStore, seu destino definitivo para os gadgets
+              Bem-vindo à CommitStore, seu destino definitivo para os gadgets
               mais novos e inteligentes. De teclados mecânicos e mouses ergonômicos a
               equipamentos essenciais, trazemos o melhor da inovação — tudo em um
               só lugar.
