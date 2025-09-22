@@ -1,27 +1,54 @@
-'use client'
-import { storesDummyData } from "@/assets/assets"
-import StoreInfo from "@/components/admin/StoreInfo"
-import Loading from "@/components/Loading"
-import { useEffect, useState } from "react"
-import toast from "react-hot-toast"
+"use client";
+import { storesDummyData } from "@/assets/assets";
+import StoreInfo from "@/components/admin/StoreInfo";
+import Loading from "@/components/Loading";
+import { useUser, useAuth } from "@clerk/nextjs";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 export default function AdminStores() {
+  const { user } = useUser();
+  const { getToken } = useAuth();
 
-  const [stores, setStores] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [stores, setStores] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const fetchStores = async () => {
-    setStores(storesDummyData)
-    setLoading(false)
-  }
+    try {
+      const token = await getToken();
+      const { data } = await axios.get("/api/admin/stores", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setStores(data.stores);
+    } catch (error) {
+      toast.error(error?.response?.data?.error || error.message);
+    }
+    setLoading(false);
+  };
 
+  // Lógica para alternar o status(ativo/desativada) de uma loja
   const toggleIsActive = async (storeId) => {
-    // Lógica para alternar o status de uma loja
-  }
+    try {
+      const token = await getToken();
+      const { data } = await axios.post(
+        "/api/admin/toggle-store",
+        { storeId },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      await fetchStores();
+      toast.success(data.message);
+    } catch (error) {
+      toast.error(error?.response?.data?.error || error.message);
+    }
+  };
 
   useEffect(() => {
-    fetchStores()
-  }, [])
+    if (user) {
+      fetchStores();
+    }
+  }, [user]);
 
   return !loading ? (
     <div className="text-slate-500 mb-28">
@@ -47,10 +74,9 @@ export default function AdminStores() {
                     type="checkbox"
                     className="sr-only peer"
                     onChange={() =>
-                      toast.promise(
-                        toggleIsActive(store.id),
-                        { loading: "Atualizando dados..." }
-                      )
+                      toast.promise(toggleIsActive(store.id), {
+                        loading: "Atualizando dados...",
+                      })
                     }
                     checked={store.isActive}
                   />
@@ -71,5 +97,5 @@ export default function AdminStores() {
     </div>
   ) : (
     <Loading />
-  )
+  );
 }
