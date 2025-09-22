@@ -131,7 +131,7 @@ export default function CreateStore() {
                 <span className="text-slate-800 font-medium">Loja</span>
               </h1>
               <p className="max-w-lg">
-                Para se tornar um vendedor no GoCart, envie os detalhes da sua
+                Para se tornar um vendedor na CommitStore, envie os detalhes da sua
                 loja para revisão. Sua loja será ativada após a verificação do
                 administrador.
               </p>
