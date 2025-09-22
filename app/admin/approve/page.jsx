@@ -1,27 +1,55 @@
-'use client'
-import { storesDummyData } from "@/assets/assets"
-import StoreInfo from "@/components/admin/StoreInfo"
-import Loading from "@/components/Loading"
-import { useEffect, useState } from "react"
-import toast from "react-hot-toast"
+"use client";
+import { storesDummyData } from "@/assets/assets";
+import StoreInfo from "@/components/admin/StoreInfo";
+import Loading from "@/components/Loading";
+import { useUser, useAuth } from "@clerk/nextjs";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 export default function AdminApprove() {
+  const { user } = useUser();
+  const { getToken } = useAuth();
 
-  const [stores, setStores] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [stores, setStores] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const fetchStores = async () => {
-    setStores(storesDummyData)
-    setLoading(false)
-  }
+    try {
+      const token = await getToken();
+      const { data } = await axios.get("/api/admin/approve-store", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setStores(data.stores);
+    } catch (error) {
+      toast.error(error?.response?.data?.error || error.message);
+    }
+    setLoading(false);
+  };
 
+  // Lógica para aprovar ou rejeitar uma loja
   const handleApprove = async ({ storeId, status }) => {
-    // Lógica para aprovar ou rejeitar uma loja
-  }
+    try {
+      const token = await getToken();
+      const { data } = await axios.post(
+        "/api/admin/approve-store",
+        { storeId, status },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      toast.success(data.message);
+      await fetchStores()
+    } catch (error) {
+      toast.error(error?.response?.data?.error || error.message);
+    }
+  };
 
   useEffect(() => {
-    fetchStores()
-  }, [])
+    if (user) {
+      fetchStores();
+    }
+  }, [user]);
 
   return !loading ? (
     <div className="text-slate-500 mb-28">
@@ -44,7 +72,7 @@ export default function AdminApprove() {
                 <button
                   onClick={() =>
                     toast.promise(
-                      handleApprove({ storeId: store.id, status: 'approved' }),
+                      handleApprove({ storeId: store.id, status: "approved" }),
                       { loading: "Aprovando..." }
                     )
                   }
@@ -55,7 +83,7 @@ export default function AdminApprove() {
                 <button
                   onClick={() =>
                     toast.promise(
-                      handleApprove({ storeId: store.id, status: 'rejected' }),
+                      handleApprove({ storeId: store.id, status: "rejected" }),
                       { loading: "Rejeitando..." }
                     )
                   }
@@ -77,5 +105,5 @@ export default function AdminApprove() {
     </div>
   ) : (
     <Loading />
-  )
+  );
 }
