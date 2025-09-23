@@ -10,7 +10,7 @@ import { useAuth } from "@clerk/nextjs";
 import axios from "axios";
 
 const StoreLayout = ({ children }) => {
-  const { getTokeen } = useAuth();
+  const { getToken } = useAuth();
 
   const [isSeller, setIsSeller] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -18,7 +18,7 @@ const StoreLayout = ({ children }) => {
 
   const fetchIsSeller = async () => {
     try {
-      const token = await getTokeen();
+      const token = await getToken();
       const { data } = await axios.get("/api/store/is-seller", {
         headers: { Authorization: `Bearer ${token} ` },
       });
@@ -56,7 +56,7 @@ const StoreLayout = ({ children }) => {
         href="/"
         className="bg-slate-700 text-white flex items-center gap-2 mt-8 p-2 px-6 max-sm:text-sm rounded-full"
       >
-       Voltar para a home <ArrowRightIcon size={18} />
+        Voltar para a home <ArrowRightIcon size={18} />
       </Link>
     </div>
   );
